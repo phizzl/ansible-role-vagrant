@@ -1,0 +1,21 @@
+---
+- name: Create destination directory
+  file:
+    path: "{{ item.dest }}"
+    state: directory
+    owner: "{{ vagrant_user }}"
+  loop: "{{ vagrant_file_src }}"
+
+- name: Checkout vagrant setups
+  git:
+    repo: "{{ item.repo }}"
+    dest: "{{ item.dest }}"
+  loop: "{{ vagrant_file_src }}"
+  when: item.repo is defined and item.repo != ""
+  become_user: "{{ vagrant_user }}"
+
+- name: Execute Vagrant tasks
+  include_tasks: run-vagrant.yml
+  loop: "{{ vagrant_file_src }}"
+  loop_control:
+    loop_var: vagrant

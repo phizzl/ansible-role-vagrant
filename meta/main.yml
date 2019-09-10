@@ -1,0 +1,8 @@
+---
+galaxy_info:
+  role_name: vagrant
+  author: phizzl
+
+dependencies:
+  - role: andrewrothstein.vagrant
+  - role: oefenweb.virtualbox

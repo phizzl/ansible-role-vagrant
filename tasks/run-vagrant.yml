@@ -1,0 +1,26 @@
+---
+- name: Initialize Vagrantfile
+  shell: "vagrant init {{ vagrant.init }}"
+  args:
+    chdir: "{{ vagrant.dest }}"
+    creates: "{{ vagrant.dest }}/Vagrantfile"
+  when: vagrant.init is defined and vagrant.init != ""
+  become_user: "{{ vagrant_user }}"
+
+- name: Setting directory permission
+  file:
+    path: "{{ vagrant.dest }}"
+    state: directory
+    owner: "{{ vagrant_user }}"
+    recurse: true
+  when: vagrant.repo is defined and vagrant.repo != ""
+  become_user: "{{ vagrant_user }}"
+
+- name: Running vagrant
+  shell: "vagrant {{ action }} {{ flags }}"
+  args:
+    chdir: "{{ vagrant.dest }}"
+  vars:
+    action: "{{ vagrant.state | default('up') }}"
+    flags: "{{ '-f' if vagrant.state is defined and vagrant.state != 'up' else '' }}"
+  become_user: "{{ vagrant_user }}"

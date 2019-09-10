@@ -1,0 +1,24 @@
+---
+## The user that should be used to execute Vagrant
+vagrant_user: "{{ ansible_user }}"
+
+## Configure the directories to run vagrant.
+## You also might add a GIT repository to pull the Vagrantfile from
+##
+## An example configuration you look like this:
+## ```yaml
+## vagrant_file_src:
+##  # Initialize new Vagrantfile based on the ubuntu/bionic64 image from the
+##  # Vagrant cloud
+##  - dest: /opt/vagrant-ubuntu1
+##    init: ubuntu/bionic64
+##  # Clone Vagrantfile from a GIT repository
+##  - dest: /opt/vagrant-ubuntu2
+##    repo: https://github.com/someguy/somerepo.git
+##  # Halt Vagrant box
+##  - dest: /opt/vagrant-ubuntu3
+##    state: halt
+##  # Ensure a Vagrant box is destroyed
+##  - dest: /opt/vagrant-ubuntu4
+##    state: destroy
+vagrant_file_src: []

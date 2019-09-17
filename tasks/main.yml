@@ -10,6 +10,9 @@
   git:
     repo: "{{ item.repo }}"
     dest: "{{ item.dest }}"
+    accept_hostkey: "{{ item.accept_hostkey| default('yes') }}"
+    version: "{{ item.version | default('HEAD') }}"
+    key_file: "{{ item.key_file |default('') }}"
   loop: "{{ vagrant_file_src }}"
   when: item.repo is defined and item.repo != ""
   become_user: "{{ vagrant_user }}"

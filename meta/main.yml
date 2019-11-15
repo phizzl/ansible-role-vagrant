@@ -1,6 +1,6 @@
 ---
 galaxy_info:
-  role_name: vacker
+  role_name: vagrant
   author: phizzl
   description: Role to boot docker compose setups in a isolated vagrant machine on a remote system
   license: MIT

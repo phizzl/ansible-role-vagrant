@@ -1,0 +1,39 @@
+---
+- set_fact:
+    vagrant_basepath: "{{ vagrant.dest }}/.role_vagrant"
+    vagrant_ansible_basepath: "{{ vagrant.dest }}/.role_vagrant/ansible"
+
+- name: Create destination directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: true
+  loop:
+    - "{{ vagrant_basepath }}/ansible/inventory"
+    - "{{ vagrant_basepath }}/ansible/roles"
+
+- name: "Copy template"
+  template: "{{ item }}"
+  loop:
+    - src: "{{ vagrant.vagrantfile | default('vagrant/Vagrantfile.j2') }}"
+      dest: "{{ vagrant.dest }}/Vagrantfile"
+    - src: "vagrant/provision.sh.j2"
+      dest: "{{ vagrant_basepath }}/provision.sh"
+    - src: "vagrant/boot.sh.j2"
+      dest: "{{ vagrant_basepath }}/boot.sh"
+    - src: "ansible/ansible.cfg.j2"
+      dest: "{{ vagrant_ansible_basepath }}/ansible.cfg"
+    - src: "ansible/requirements.yml.j2"
+      dest: "{{ vagrant_ansible_basepath }}/requirements.yml"
+    - src: "ansible/boot.yml.j2"
+      dest: "{{ vagrant_ansible_basepath }}/boot.yml"
+    - src: "ansible/inventory/hosts.j2"
+      dest: "{{ vagrant_ansible_basepath }}/inventory/hosts"
+
+- name: Running VM
+  include_tasks: run-vagrant-machine.yml
+  when: "vagrant.state is not defined or vagrant.state == 'up'"
+
+- name: Stopping VM
+  include_tasks: stop-vagrant-machine.yml
+  when: "vagrant.state is defined and (vagrant.state == 'halt' or vagrant.state == 'destroy')"

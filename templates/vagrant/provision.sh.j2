@@ -1,0 +1,14 @@
+#!/bin/bash
+
+##Step 1: Ansible###################################
+sudo apt-add-repository --yes --update ppa:ansible/ansible && \
+sudo apt-get update && \
+sudo apt install -y ansible python-pip docker-ce && \
+pip install docker docker-compose && \
+
+##Step 2: Ansible role requirements#################
+cd /vagrant/.role_vagrant/ansible && \
+ansible-galaxy install -r requirements.yml
+
+##Step 3: Custom provision_script from config#######
+{% if vagrant.provision_script is defined %}{{ vagrant.provision_script }}{% endif %}

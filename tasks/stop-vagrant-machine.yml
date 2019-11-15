@@ -1,0 +1,5 @@
+---
+- name: Stopping Vagrant
+  shell: "vagrant {{ vagrant.state }} -f"
+  args:
+    chdir: "{{ vagrant.dest }}"

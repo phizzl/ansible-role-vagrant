@@ -1,8 +1,19 @@
 ---
 galaxy_info:
-  role_name: vagrant
+  role_name: vacker
   author: phizzl
+  description: Role to boot docker compose setups in a isolated vagrant machine on a remote system
+  license: MIT
+  min_ansible_version: 2.8
+  platforms:
+    - name: GenericUNIX
+      versions:
+        - all
+    - name: GenericBSD
+      versions:
+        - all
+    - name: GenericLinux
+      versions:
+        - all
 
-dependencies:
-  - role: andrewrothstein.vagrant
-  - role: oefenweb.virtualbox
+allow_duplicates: yes

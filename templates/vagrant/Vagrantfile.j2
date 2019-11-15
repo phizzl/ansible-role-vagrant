@@ -1,0 +1,20 @@
+Vagrant.configure("2") do |config|
+  config.vm.box = "{{ vagrant.box | default('ubuntu/bionic64') }}"
+
+
+  config.vm.synced_folder ".role_vagrant/ansible/", "/ansible"
+
+  config.vm.provision "shell", path: "provision.sh"
+
+{% if vagrant.forwarded_ports is defined %}
+    {% for port in vagrant.forwarded_ports %}
+  config.vm.network "forwarded_port",
+    guest: {{ port.guest }},
+    host: {{ port.host | default(port.guest) }},
+    auto_correct: {% if (port.auto_correct | default('no')) == 'yes' %}true{% else %}false{% endif %}
+    {% endfor %}
+{% endif %}
+{% if vagrant.vagrantfile_append is defined %}
+  {{ vagrant.vagrantfile_append }}
+{% endif %}
+end

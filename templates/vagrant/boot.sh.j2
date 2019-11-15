@@ -1,0 +1,10 @@
+#!/bin/bash
+
+##Inject SSH private key if defined#####
+if [ -f /vagrant/.role_vagrant/id_rsa_vacker ]; then
+    cp -vf /vagrant/.role_vagrant/id_rsa_vacker /home/vagrant/.ssh/id_rsa && \
+    chmod -v 0600 /home/vagrant/.ssh/id_rsa
+fi
+
+##Run custom boot script################
+{% if vagrant.boot_script is defined %}{{ vagrant.boot_script }}{% endif %}

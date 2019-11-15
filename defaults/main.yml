@@ -1,24 +1,30 @@
 ---
-## The user that should be used to execute Vagrant
-vagrant_user: "{{ ansible_user }}"
-
-## Configure the directories to run vagrant.
-## You also might add a GIT repository to pull the Vagrantfile from
+## Configure the directories to run docker in an isolated vagrant box.
+## You also might add a GIT repository to pull the docker-compose.yml from
 ##
 ## An example configuration you look like this:
 ## ```yaml
-## vagrant_file_src:
-##  # Initialize new Vagrantfile based on the ubuntu/bionic64 image from the
-##  # Vagrant cloud
-##  - dest: /opt/vagrant-ubuntu1
-##    init: ubuntu/bionic64
-##  # Clone Vagrantfile from a GIT repository
-##  - dest: /opt/vagrant-ubuntu2
-##    repo: https://github.com/someguy/somerepo.git
-##  # Halt Vagrant box
-##  - dest: /opt/vagrant-ubuntu3
-##    state: halt
-##  # Ensure a Vagrant box is destroyed
-##  - dest: /opt/vagrant-ubuntu4
-##    state: destroy
-vagrant_file_src: []
+## vacker_src:
+##   - dest: /home/vacker/jenkins
+##     state: up
+##     authorized_keys:
+##       - "ssh-rsa ABCDEFGHIJKLM123214345435/sqswq"
+##     docker_compose_src:
+##       repo: https://github.com/bitnami/bitnami-docker-jenkins.git
+##       dest: /home/vagrant/jenkins
+##       inline: |
+##         version: '2'
+##         services:
+##           jenkins:
+##             image: 'bitnami/jenkins:2'
+##             ports:
+##               - '127.0.0.1:10000:8080'
+##             volumes:
+##               - 'jenkins_data:/bitnami'
+##             environment:
+##               - JENKINS_USERNAME=nexus
+##               - JENKINS_PASSWORD=n3xusJ3nk1ns
+##         volumes:
+##           jenkins_data:
+##             driver: local
+vacker_src: []

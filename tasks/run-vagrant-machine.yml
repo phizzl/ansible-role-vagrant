@@ -1,14 +1,14 @@
 ---
 - name: Remove private key from /vagrant
   file:
-    path: "{{ vagrant_basepath }}/id_rsa_vacker"
+    path: "{{ host_vagrant_workdir }}/id_rsa_injected"
     state: absent
   when: vagrant.key_file is not defined
 
 - name: Copy private key to /vagrant
   copy:
     src: "{{ vagrant.key_file }}"
-    dest: "{{ vagrant_basepath }}/id_rsa_vacker"
+    dest: "{{ host_vagrant_workdir }}/id_rsa_injected"
   when: vagrant.key_file is defined
 
 - name: Running vagrant
@@ -20,11 +20,11 @@
     flags: "{{ vagrant.flags | default('') }}"
 
 - name: Running boot.sh in VM
-  shell: "vagrant ssh -c \"cd /vagrant && bash boot.sh\""
+  shell: "vagrant ssh -c \"cd {{ guest_vagrant_workdir }} && bash boot.sh\""
   args:
     chdir: "{{ vagrant.dest }}"
 
 - name: Running Ansible boot.yml in VM
-  shell: "vagrant ssh -c \"cd /ansible && ansible-playbook -v -i inventory/hosts boot.yml\""
+  shell: "vagrant ssh -c \"cd {{ guest_ansible_workdir }} && ansible-playbook -v -i inventory/hosts boot.yml\""
   args:
     chdir: "{{ vagrant.dest }}"

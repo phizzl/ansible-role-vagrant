@@ -1,12 +1,12 @@
 ---
 - hosts: all
   become: true
+{% if vagrant.authorized_keys is defined and vagrant.authorized_keys|length > 0 %}
   roles:
     - role: grog.authorized-key
       vars:
         authorized_key_list:
           - name: vagrant
-{% if vagrant.authorized_keys is defined and vagrant.authorized_keys|length > 0 %}
             authorized_keys:
 {% for key in vagrant.authorized_keys %}
               - key: "{{ key }}"

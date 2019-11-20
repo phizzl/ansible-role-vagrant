@@ -1,7 +1,9 @@
 ---
 - set_fact:
-    vagrant_basepath: "{{ vagrant.dest }}/.role_vagrant"
-    vagrant_ansible_basepath: "{{ vagrant.dest }}/.role_vagrant/ansible"
+    host_vagrant_workdir: "{{ vagrant.dest }}/.role_vagrant/vagrant"
+    guest_vagrant_workdir: "/mnt/vagrant"
+    host_ansible_workdir: "{{ vagrant.dest }}/.role_vagrant/ansible"
+    guest_ansible_workdir: "/mnt/ansible"
 
 - name: Create destination directory
   file:
@@ -9,26 +11,42 @@
     state: directory
     recurse: true
   loop:
-    - "{{ vagrant_basepath }}/ansible/inventory"
-    - "{{ vagrant_basepath }}/ansible/roles"
+    - "{{ host_vagrant_workdir }}"
+    - "{{ host_ansible_workdir }}/inventory"
+    - "{{ host_ansible_workdir }}/roles"
+
+- name: Copy Vagrantfile from template
+  template:
+    src: "{{ vagrant.vagrantfile | default('vagrant/Vagrantfile.j2') }}"
+    dest: "{{ vagrant.dest }}/Vagrantfile"
+  register: vagrantfile_template
 
 - name: "Copy template"
   template: "{{ item }}"
   loop:
-    - src: "{{ vagrant.vagrantfile | default('vagrant/Vagrantfile.j2') }}"
-      dest: "{{ vagrant.dest }}/Vagrantfile"
+    # Create script to be triggered when provisioning the machine
     - src: "vagrant/provision.sh.j2"
-      dest: "{{ vagrant_basepath }}/provision.sh"
+      dest: "{{ host_vagrant_workdir }}/provision.sh"
+
+    # Create script to run every time the machine boots
     - src: "vagrant/boot.sh.j2"
-      dest: "{{ vagrant_basepath }}/boot.sh"
+      dest: "{{ host_vagrant_workdir }}/boot.sh"
+
+    # Create all Ansible config files
     - src: "ansible/ansible.cfg.j2"
-      dest: "{{ vagrant_ansible_basepath }}/ansible.cfg"
-    - src: "ansible/requirements.yml.j2"
-      dest: "{{ vagrant_ansible_basepath }}/requirements.yml"
-    - src: "ansible/boot.yml.j2"
-      dest: "{{ vagrant_ansible_basepath }}/boot.yml"
+      dest: "{{ host_ansible_workdir }}/ansible.cfg"
     - src: "ansible/inventory/hosts.j2"
-      dest: "{{ vagrant_ansible_basepath }}/inventory/hosts"
+      dest: "{{ host_ansible_workdir }}/inventory/hosts"
+    - src: "ansible/requirements.yml.j2"
+      dest: "{{ host_ansible_workdir }}/requirements.yml"
+    - src: "ansible/boot.yml.j2"
+      dest: "{{ host_ansible_workdir }}/boot.yml"
+
+- name: Halting machine if Vagrantfile has changed
+  shell: "vagrant halt -f || echo Machine not started yet"
+  args:
+    chdir: "{{ vagrant.dest }}"
+  when: vagrantfile_template.changed == True
 
 - name: Running VM
   include_tasks: run-vagrant-machine.yml

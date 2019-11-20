@@ -1,8 +1,8 @@
 #!/bin/bash
 
 ##Inject SSH private key if defined#####
-if [ -f /vagrant/.role_vagrant/id_rsa_vacker ]; then
-    cp -vf /vagrant/.role_vagrant/id_rsa_vacker /home/vagrant/.ssh/id_rsa && \
+if [ -f {{ host_vagrant_workdir }}/id_rsa_injected ]; then
+    cp -vf {{ host_vagrant_workdir }}/id_rsa_injected /home/vagrant/.ssh/id_rsa && \
     chmod -v 0600 /home/vagrant/.ssh/id_rsa
 fi
 

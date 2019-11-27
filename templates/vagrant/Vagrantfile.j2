@@ -1,7 +1,12 @@
 Vagrant.configure("2") do |config|
   config.vm.box = "{{ vagrant.box | default('ubuntu/bionic64') }}"
 
-  config.vm.network :forwarded_port, guest: 22, host: {{ vagrant.ssh_port | default('2222') }}, id: "ssh", autocorrect: {% if vagrant.ssh_port is defined %}false{% else %}true{% endif %}
+  config.vm.network :forwarded_port,
+    guest: 22,
+    host: {{ vagrant.ssh_port | default('2222') }},
+    id: "ssh",
+    {% if vagrant.ssh_host_ip is defined %}host_ip: "{{ vagrant.ssh_host_ip }}",{% endif %}
+    autocorrect: {% if vagrant.ssh_port is defined %}false{% else %}true{% endif %}
 
   config.vm.synced_folder "{{ host_vagrant_workdir }}", "{{ guest_vagrant_workdir }}"
   config.vm.synced_folder "{{ host_ansible_workdir }}", "{{ guest_ansible_workdir }}"

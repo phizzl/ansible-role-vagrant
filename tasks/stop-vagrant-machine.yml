@@ -3,3 +3,9 @@
   shell: "vagrant {{ vagrant.state }} -f"
   args:
     chdir: "{{ vagrant.dest }}"
+
+- name: Cleanup if destroyed
+  file:
+    path: "{{ vagrant.dest }}"
+    state: absent
+  when: vagrant.state is defined and vagrant.state == "destroy"

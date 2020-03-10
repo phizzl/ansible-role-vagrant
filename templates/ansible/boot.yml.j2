@@ -12,3 +12,5 @@
               - key: "{{ key }}"
 {% endfor %}
 {% endif %}
+
+{% if vagrant.ansible_play is defined %}{{  vagrant.ansible_play }}{% endif %}

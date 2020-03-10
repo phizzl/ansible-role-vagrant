@@ -4,3 +4,6 @@
   loop: "{{ vagrant_src }}"
   loop_control:
     loop_var: vagrant
+  args:
+    apply:
+      become_user: "{{ vagrant.user | default(ansible_user) }}"

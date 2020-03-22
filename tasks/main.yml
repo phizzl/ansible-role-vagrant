@@ -1,4 +1,8 @@
 ---
+- name: Installing plugins
+  shell: "vagrant plugin install {{ item }}"
+  loop: "{{ vagrant_plugins | default([]) }}"
+
 - name: Running Vagrant setup
   include_tasks: run-single-setup.yml
   loop: "{{ vagrant_src }}"

@@ -1,4 +1,8 @@
 ---
+- name: Installing plugins
+  shell: "vagrant plugin install {{ item }}"
+  loop: "{{ vagrant_plugins | default([]) }}"
+
 - set_fact:
     host_vagrant_workdir: "{{ vagrant.dest }}/.role_vagrant/vagrant"
     guest_vagrant_workdir: "/mnt/vagrant"
